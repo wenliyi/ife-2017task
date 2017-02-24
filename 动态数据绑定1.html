@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	</head>
+	<body>
+	<script>
+//=====================================================================================	
+		//没有深层次遍历对象的各个属性
+			function Observer(arg) {
+				this.data = new Object();
+				//设置数据属性
+				for(let key in arg) {
+					this.data["_"+key] = arg[key]; 
+				}
+				//设置对应的访问器属性
+				for(let key in arg) {//内部的函数中使用了变量key，形成了闭包，
+									 //因此若用var代替let,以下要用IIFE改写
+					Object.defineProperty(this.data, key, {
+						get: function() {
+							console.log("你访问了 " + key);//这里引用了key
+							},
+						set: function(newValue) {
+							this["_"+key] = newValue;//这里及下一行也引用了key
+							console.log("你设置了" + key + ", 新的值为" + newValue);
+							}
+						});		
+				}
+				
+			};
+			
+//=====================================================================================			
+			
+			let app1 = new Observer({
+			  name: 'youngwind',
+			  age: 25
+			});
+			let app2 = new Observer({
+			  university: 'bupt',
+			  major: 'computer'
+			});
+
+			 //要实现的结果如下：
+			app1.data.name;// 你访问了 name
+			app1.data.age = 100;  // 你设置了 age，新的值为100
+			app2.data.university;// 你访问了 university
+			app2.data.major = 'science';  // 你设置了 major，新的值为 science		
+		</script>
+	</body>
+</html>
+	
